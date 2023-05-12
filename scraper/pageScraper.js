@@ -2,10 +2,6 @@ const scraperObject = {
 	url: 'https://www.hockey-reference.com/playoffs/NHL_2023_goalies.html',
 	async scraper(browser){
 		let page = await browser.newPage();
-    
-    let year = 2004;
-    let baseURL = this.url;
-    this.url = baseURL;
 		await page.goto(this.url);
     
     let yearByYearData = [];
@@ -31,13 +27,12 @@ const scraperObject = {
         	url: 'https://www.hockey-reference.com/playoffs/NHL_2023_goalies.html',
           const dataTable = await page.$('#stats');
           const tableResults = await dataTable.$('tbody');
+            OR       const tableResults = await page.$('#stats > tbody'); 
           let teams = await tableResults.$$eval('tr > td', teams => {
 
       */
       const dataTable = await page.$('#stats');
       const tableResults = await dataTable.$('tbody');
-      //console.log(dataTable);
-      //console.log(tableResults);
 
       let teamByTeamData = [];
       
@@ -49,7 +44,7 @@ const scraperObject = {
       });
 
       for(i=0; i< teams.length; i++){
-        console.log(teams[i]);
+        //console.log(teams[i]);
         /* const teamData = {};
         if(year >= 2006){
           teamData['TEAM'] = teams[i]; 
