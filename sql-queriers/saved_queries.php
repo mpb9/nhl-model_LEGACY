@@ -94,7 +94,8 @@ for($i = 0; $i < $final_query_id; $i++){
     $pagePath = array(
       'to_table' => $row['to_table'], 
       'to_all_data' => $row['to_all_data'],
-      'to_data_element' => $row['to_data_element']
+      'to_data_element' => $row['to_data_element'],
+      'num_cols' => $row['num_cols']
     );
   
     $queries[$array_index] = array(

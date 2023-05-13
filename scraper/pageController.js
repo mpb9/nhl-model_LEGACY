@@ -7,10 +7,10 @@ async function scrapeAll(browserInstance, requestInstance){
 	try{
 		browser = await browserInstance;
     req_data = await requestInstance;
-    console.log(req_data);
+    //console.log(req_data);
 
 		let raw_data = {};
-		raw_data = await pageScraper.scraper(browser);	
+		raw_data = await pageScraper.scraper(browser, req_data.websites, req_data.pagePath);	
 		await browser.close();
 
     let data = JSON.stringify(raw_data);

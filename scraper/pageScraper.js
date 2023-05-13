@@ -1,84 +1,37 @@
 const scraperObject = {
-	url: 'https://www.hockey-reference.com/playoffs/NHL_2023_goalies.html',
-	async scraper(browser){
+	/* url: 'https://www.hockey-reference.com/playoffs/NHL_2023_goalies.html', */
+	async scraper(browser, webpages, pagePaths){
 		let page = await browser.newPage();
-		await page.goto(this.url);
+		await page.goto(webpages[0]);
     
-    let yearByYearData = [];
+    let scraped_data = [];
+
     async function scrapeCurrentPage(){
-      /* 
-      statmuse: 
-        document.querySelector("#container > div:nth-child(2) > div > table > tbody > tr:nth-child(1) > td:nth-child(4)")
-          url: 'https://www.statmuse.com/nhl',
-          this.url = baseURL + '/ask?q=nhl+team+records+in+the+' + (year-1) + '%2F' + (year) + '+season';
-          const dataTable = await page.$('#container > div.relative.overflow-x-auto > table');
-          const tableResults = await dataTable.$('tbody');
-          let teams = await tableResults.$$eval('tr > td', teams =>
-
-      natural stat trick:
-        document.querySelector("#teams > tbody > tr:nth-child(1) > td:nth-child(1)")
-	        url: 'https://www.naturalstattrick.com/games.php?fromseason=20222023&thruseason=20222023&stype=3&sit=5v5&loc=B&team=CAR&rate=n',
-          const dataTable = await page.$('#teams');
-          const tableResults = await dataTable.$('tbody');
-          let teams = await tableResults.$$eval('tr > td', teams => {
-
-      hockey-reference:
-        document.querySelector("#stats > tbody > tr:nth-child(1) > td:nth-child(5)")
-        	url: 'https://www.hockey-reference.com/playoffs/NHL_2023_goalies.html',
-          const dataTable = await page.$('#stats');
-          const tableResults = await dataTable.$('tbody');
-            OR       const tableResults = await page.$('#stats > tbody'); 
-          let teams = await tableResults.$$eval('tr > td', teams => {
-
-      */
-      const dataTable = await page.$('#stats');
-      const tableResults = await dataTable.$('tbody');
-
-      let teamByTeamData = [];
+      const table = await page.$(pagePaths.toTable);
+      const path_to_data = await table.$(pagePaths.toAllData);
       
-      let teams = await tableResults.$$eval('tr > td', teams => {
-        teams = teams.map(team => team.textContent);
-        teams = teams.filter(team => team.length !== 0);
-        console.log(teams);
-        return teams;
+      let page_raw_data = await path_to_data.$$eval(pagePaths.toDataElement, page_raw_data => {
+        page_raw_data = page_raw_data.map(data_element => data_element.textContent);
+        page_raw_data = page_raw_data.filter(data_element => data_element.length !== 0);
+        return page_raw_data;
       });
 
-      for(i=0; i< teams.length; i++){
-        //console.log(teams[i]);
-        /* const teamData = {};
-        if(year >= 2006){
-          teamData['TEAM'] = teams[i]; 
-          teamData['GP'] = teams[i+2]; teamData['RECORD'] = teams[i+3]; 
-          teamData['PTS'] = teams[i+4]; teamData['W'] = teams[i+5];
-          teamData['L'] = teams[i+6]; teamData['OTL'] = teams[i+7]; 
-          teamData['PTS_PCT'] = teams[i+8]; teamData['G'] = teams[i+9]; 
-          teamData['GA'] = teams[i+10]; teamData['PP_PCT'] = teams[i+11]; 
-          teamData['PK_PCT'] = teams[i+12]; teamData['S_PER_GP'] = teams[i+13]; 
-          teamData['SA_PER_GP'] = teams[i+14];
-          i--;
-        } else {
-          teamData['TEAM'] = teams[i]; 
-          teamData['GP'] = teams[i+2]; teamData['RECORD'] = teams[i+3]; 
-          teamData['PTS'] = teams[i+4]; teamData['W'] = teams[i+5];
-          teamData['L'] = teams[i+6]; teamData['T'] = teams[i+7]; 
-          teamData['OTL'] = teams[i+8]; teamData['PTS_PCT'] = teams[i+9]; 
-          teamData['G'] = teams[i+10]; teamData['GA'] = teams[i+11]; 
-          teamData['PP_PCT'] = teams[i+12]; teamData['PK_PCT'] = teams[i+13]; 
-          teamData['S_PER_GP'] = teams[i+14]; teamData['SA_PER_GP'] = teams[i+15];
+      let numRow = Math.ceil(page_raw_data.length/Number(pagePaths.numCols));
+      let page_data = []
+
+      for(i=0; i< numRow; i++){
+        let index = (i)*Number(pagePaths.numCols);
+        let finalIndex = index +  Number(pagePaths.numCols);
+        const row_data = [];
+        while(index < finalIndex){
+          row_data.push(page_raw_data[index]);
+          index++;
         }
-        teamByTeamData.push(teamData); */
-      }
-
-      // yearByYearData.push([(year-1) + "-" + year, teamByTeamData])
-
-      /* if(year < 2022){
-        year++;
-        year = year === 2005 ? 2006 : year;
-        await page.goto(baseURL + '/ask?q=nhl+team+records+in+the+' + (year-1) + '%2F' + year + '+season');
-        return scrapeCurrentPage();
+        page_data.push(row_data);
+        
       }
       await page.close();
-      return yearByYearData; */
+      return page_data;
     }
 
     let data = await scrapeCurrentPage();

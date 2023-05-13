@@ -23,8 +23,7 @@ $base_url = $website['baseUrl'];
 $extensions = $website['extensions'];
 
 $page_path = $_POST['pagePath'];
-if(empty($page_path['toTable']) || empty($page_path['toAllData']) || empty($page_path['toDataElement'])) die();
-
+if(empty($page_path['toTable']) || empty($page_path['toAllData']) || empty($page_path['toDataElement']) || empty($page_path['numCols'])) die();
 
 try{
   $sql = "INSERT INTO queries SET
@@ -82,12 +81,14 @@ try{
           query_id = :query_id,
           to_table = :to_table,
           to_all_data = :to_all_data,
-          to_data_element = :to_data_element";
+          to_data_element = :to_data_element,
+          num_cols = :num_cols";
   $s = $pdo->prepare($sql);
   $s->bindValue(':query_id', $new_query_index);
   $s->bindValue(':to_table', $page_path['toTable']);
   $s->bindValue(':to_all_data', $page_path['toAllData']);
   $s->bindValue(':to_data_element', $page_path['toDataElement']);
+  $s->bindValue(':num_cols', $page_path['numCols']);
   $s->execute();
 } catch (PDOException $e) {
   echo $e->getMessage();
