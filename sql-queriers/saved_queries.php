@@ -77,8 +77,13 @@ for($i = 0; $i < $final_query_id; $i++){
       echo $e->getMessage();
       exit();
     }
+    $extCount = 0;
     while(($row = $s->fetch(PDO::FETCH_ASSOC)) != false){
       $extensions[] = $row['ext'];
+      $extCount = 1;
+    }
+    if($extCount == 0){
+      $extensions = [''];
     }
   
     try{

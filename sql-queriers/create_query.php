@@ -18,9 +18,13 @@ $table_name = $table['name'];
 $columns = $table['columns'];
 
 $website = $_POST['website'];
-if(empty($website['baseUrl']) || empty($website['extensions'])) die();
+if(empty($website['baseUrl'])) die();
 $base_url = $website['baseUrl'];
-$extensions = $website['extensions'];
+$extensions = [''];
+if(!empty($website['extensions'])){
+  $extensions = $website['extensions'];
+
+}
 
 $page_path = $_POST['pagePath'];
 if(empty($page_path['toAllHeaders']) || empty($page_path['toHeaderElement']) || empty($page_path['toAllData']) || empty($page_path['toDataElement']) || empty($page_path['numCols'])) die();

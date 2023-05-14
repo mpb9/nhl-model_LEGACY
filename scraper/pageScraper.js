@@ -1,5 +1,5 @@
 const scraperObject = {
-	async scraper(browser, webpages, pagePaths){
+	async scraper(browser, webpages, pagePaths, numberOfColumns){
 		let page = await browser.newPage();
     let page_index = 0;
 		await page.goto(webpages[page_index]);
@@ -15,12 +15,12 @@ const scraperObject = {
         return page_raw_data;
       });
 
-      let numRow = Math.ceil(page_raw_data.length/Number(pagePaths.numCols));
+      let numRow = Math.ceil(page_raw_data.length/Number(numberOfColumns));
       let page_data = []
 
       for(i=0; i< numRow; i++){
-        let index = (i)*Number(pagePaths.numCols);
-        let finalIndex = index +  Number(pagePaths.numCols);
+        let index = (i)*Number(numberOfColumns);
+        let finalIndex = index + Number(numberOfColumns);
         const row_data = [];
         while(index < finalIndex){
           row_data.push(page_raw_data[index]);
@@ -54,7 +54,7 @@ const scraperObject = {
       const path_to_headers = await page.$(pagePaths.toAllHeaders);
       let page_headers = await path_to_headers.$$eval(pagePaths.toHeaderElement, page_headers => {
         page_headers = page_headers.map(header_element => header_element.textContent);
-        page_headers = page_headers.filter(header_element => header_element.length !== 0);
+        //page_headers = page_headers.filter(header_element => header_element.length !== 0);
         return page_headers;
       });
 
