@@ -92,7 +92,8 @@ for($i = 0; $i < $final_query_id; $i++){
     }
     $row = $s->fetch(PDO::FETCH_ASSOC);
     $pagePath = array(
-      'to_table' => $row['to_table'], 
+      'to_all_headers' => $row['to_all_headers'], 
+      'to_header_element' => $row['to_header_element'], 
       'to_all_data' => $row['to_all_data'],
       'to_data_element' => $row['to_data_element'],
       'num_cols' => $row['num_cols']

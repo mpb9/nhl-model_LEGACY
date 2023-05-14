@@ -1,14 +1,13 @@
 const scraperObject = {
-	/* url: 'https://www.hockey-reference.com/playoffs/NHL_2023_goalies.html', */
 	async scraper(browser, webpages, pagePaths){
 		let page = await browser.newPage();
-		await page.goto(webpages[0]);
+    let page_index = 0;
+		await page.goto(webpages[page_index]);
     
     let scraped_data = [];
 
     async function scrapeCurrentPage(){
-      const table = await page.$(pagePaths.toTable);
-      const path_to_data = await table.$(pagePaths.toAllData);
+      const path_to_data = await page.$(pagePaths.toAllData);
       
       let page_raw_data = await path_to_data.$$eval(pagePaths.toDataElement, page_raw_data => {
         page_raw_data = page_raw_data.map(data_element => data_element.textContent);
@@ -30,14 +29,42 @@ const scraperObject = {
         page_data.push(row_data);
         
       }
+
+      scraped_data.push(page_data);
+      page_index++;
+      if(page_index < webpages.length){
+        await page.goto(webpages[page_index]);
+        return scrapeCurrentPage();
+      }
+
       await page.close();
-      return page_data;
+      return scraped_data;
     }
 
     let data = await scrapeCurrentPage();
     return data;
     
-	}
+	},
+
+  async headerScraper(browser, webpages, pagePaths){
+    let page = await browser.newPage();
+		await page.goto(webpages[0]);
+
+    async function firstPageHeaders(){
+      const path_to_headers = await page.$(pagePaths.toAllHeaders);
+      let page_headers = await path_to_headers.$$eval(pagePaths.toHeaderElement, page_headers => {
+        page_headers = page_headers.map(header_element => header_element.textContent);
+        page_headers = page_headers.filter(header_element => header_element.length !== 0);
+        return page_headers;
+      });
+
+      return page_headers;
+    }
+
+    let headers = await firstPageHeaders();
+    return headers;
+
+  }
 }
 
 module.exports = scraperObject;
