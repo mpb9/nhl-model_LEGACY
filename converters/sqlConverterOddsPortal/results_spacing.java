@@ -53,10 +53,10 @@ public class results_spacing {
 		int i = -1;
 		while (this.scan.hasNextLine()){
 			line = this.scan.nextLine();
-		    from = ':';
-		    to = " : ";
+		    from = '-';
+		    to = " - ";
 		    
-		    if(line.equals(":")) {
+		    if(line.equals("-")) {
 		    	line = lastLine + line + this.scan.nextLine();
 		    	res.remove(i);
 		    	i--;
