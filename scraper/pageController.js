@@ -8,20 +8,30 @@ async function scrapeAll(browserInstance, requestInstance){
 		browser = await browserInstance;
     req_data = await requestInstance;
 
-		let headers = await pageScraper.headerScraper(browser, req_data.websites, req_data.pagePath);
-    let headers_json = JSON.stringify(headers);
+		let headers = [];
+		console.log(req_data.pagePath.toAllHeaders);
+
+		if(req_data.pagePath.toAllHeaders === 'NA' || req_data.pagePath.toAllHeaders === 'na'){
+			for(let i=0; i < req_data.pagePath.numCols; i++){
+				headers.push('col_' + String(i+1));
+			}
+		} else {
+			headers = await pageScraper.headerScraper(browser, req_data.websites, req_data.pagePath);
+		}
+
+    // let headers_json = JSON.stringify(headers);
 		
-    fs.writeFile("trialHeaders.json", headers_json, 'utf8', function(err){
+    /* fs.writeFile("trialHeaders.json", headers_json, 'utf8', function(err){
 			if(err) {	return console.log(err); } 
 			console.log("Headers saved at './trialHeaders.json'");
-		});
+		}); */
 
     let data_json = JSON.stringify(await pageScraper.scraper(browser, req_data.websites, req_data.pagePath, headers.length));
 
-		fs.writeFile("trialData.json", data_json, 'utf8', function(err){
+		/* fs.writeFile("trialData.json", data_json, 'utf8', function(err){
 			if(err) {	return console.log(err); } 
 			console.log("Data saved at './trialData.json'");
-		});
+		}); */
 
     await browser.close();
     console.log("Browser Closed.");  console.log("");

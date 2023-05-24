@@ -69,7 +69,9 @@ for($i = 0; $i < $final_query_id; $i++){
     }
   
     try{
-      $sql = "SELECT * FROM query_extensions WHERE query_id LIKE :query_id";
+      $sql = "SELECT * FROM query_extensions 
+      WHERE query_id LIKE :query_id
+      ORDER BY ext_id ASC";
       $s = $pdo->prepare($sql);
       $s->bindValue(':query_id', $i);
       $s->execute();
@@ -84,6 +86,24 @@ for($i = 0; $i < $final_query_id; $i++){
     }
     if($extCount == 0){
       $extensions = [''];
+    }
+
+    try{
+      $sql = "SELECT * FROM query_custom_columns WHERE query_id LIKE :query_id";
+      $s = $pdo->prepare($sql);
+      $s->bindValue(':query_id', $i);
+      $s->execute();
+    } catch (PDOException $e) {
+      echo $e->getMessage();
+      exit();
+    }
+    $customCount = 0;$s->fetch(PDO::FETCH_ASSOC);
+    while(($row = $s->fetch(PDO::FETCH_ASSOC)) != false){
+      $custom_columns[] = array($row['custom_header'], $row['custom_path']);
+      $customCount = 1;
+    }
+    if($customCount == 0){
+      $custom_columns = [];
     }
   
     try{
@@ -101,8 +121,11 @@ for($i = 0; $i < $final_query_id; $i++){
       'to_header_element' => $row['to_header_element'], 
       'to_all_data' => $row['to_all_data'],
       'to_data_element' => $row['to_data_element'],
-      'num_cols' => $row['num_cols']
+      'num_cols' => $row['num_cols'],
+      'custom_columns' => $custom_columns
     );
+
+
   
     $queries[$array_index] = array(
       'query_id' => $i,

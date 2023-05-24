@@ -55,3 +55,14 @@ try{
   echo $e->getMessage();
   exit();
 }
+
+try{
+  $sql = "DELETE FROM query_custom_columns
+          WHERE query_id = :query_id";
+  $s = $pdo->prepare($sql);
+  $s->bindValue(':query_id', $query_id);
+  $s->execute();
+} catch (PDOException $e) {
+  echo $e->getMessage();
+  exit();
+}

@@ -23,11 +23,11 @@ $base_url = $website['baseUrl'];
 $extensions = [''];
 if(!empty($website['extensions'])){
   $extensions = $website['extensions'];
-
 }
 
 $page_path = $_POST['pagePath'];
-if(empty($page_path['toAllHeaders']) || empty($page_path['toHeaderElement']) || empty($page_path['toAllData']) || empty($page_path['toDataElement']) || empty($page_path['numCols'])) die();
+if(empty($page_path['toAllData']) || empty($page_path['toDataElement'])) die();
+if(($page_path['toAllHeaders'] == 'NA' || $page_path['toHeaderElement'] == 'NA') && $page_path['numCols'] <= 0) die();
 
 try{
   $sql = "INSERT INTO queries SET
@@ -99,4 +99,33 @@ try{
 } catch (PDOException $e) {
   echo $e->getMessage();
   exit();
+}
+
+if(!empty($page_path['customColumns'])){
+  $custom_columns = $page_path['customColumns'];
+  $custom_id = 0;
+  while($custom_id < $custom_columns.length){
+    if($custom_columns[$custom_id][0] != '' && $custom_columns[$custom_id][1] != ''){
+
+      try{
+        $sql = "INSERT INTO query_custom_columns SET
+                query_id = :query_id,
+                to_all_headers = :to_all_headers,
+                to_header_element = :to_header_element,
+                to_all_data = :to_all_data,
+                to_data_element = :to_data_element,
+                num_cols = :num_cols";
+        $s = $pdo->prepare($sql);
+        $s->bindValue(':query_id', $new_query_index);
+        $s->bindValue(':custom_id', $custom_id);
+        $s->bindValue(':custom_header', $custom_columns[$custom_id][1]);
+        $s->bindValue(':custom_path', $custom_columns[$custom_id][1]);
+        $s->execute();
+      } catch (PDOException $e) {
+        echo $e->getMessage();
+        exit();
+      }
+
+    }
+  }
 }
