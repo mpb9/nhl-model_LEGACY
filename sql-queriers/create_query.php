@@ -104,7 +104,7 @@ try{
 if(!empty($page_path['customColumns'])){
   $custom_columns = $page_path['customColumns'];
   $custom_id = 0;
-  while($custom_id < $custom_columns.length){
+  while($custom_id < count($custom_columns)){
     if($custom_columns[$custom_id][0] != '' && $custom_columns[$custom_id][1] != ''){
 
       try{
